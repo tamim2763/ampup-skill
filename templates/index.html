@@ -1,0 +1,84 @@
+{% extends "layout.html" %}
+
+{% block title %}AmpUp Skill — Free Career Tracks{% endblock %}
+
+{% block body %}
+<!-- Hero Section -->
+<section class="hero" id="hero">
+    <div class="hero-bg-shapes">
+        <div class="shape shape-1"></div>
+        <div class="shape shape-2"></div>
+        <div class="shape shape-3"></div>
+    </div>
+    <div class="hero-content">
+        <h1 class="hero-title">
+            Level Up Your Career<br>
+            <span class="hero-gradient">For Free</span>
+        </h1>
+        <p class="hero-subtitle">
+            Curated YouTube courses organized into career tracks.
+            Learn Blockchain, Backend Engineering, DevOps, and Machine Learning — all for free.
+        </p>
+        <a href="#tracks" class="btn btn-primary btn-lg">
+            <i class="fas fa-rocket"></i> Explore Tracks
+        </a>
+    </div>
+</section>
+
+<!-- Tracks Section -->
+<section class="tracks-section" id="tracks">
+    <div class="section-container">
+        <h2 class="section-title">Career Tracks</h2>
+        <p class="section-subtitle">Choose your path and start learning today</p>
+
+        <div class="tracks-grid">
+            {% for track in tracks %}
+            <a href="/track/{{ track.slug }}" class="track-card" id="card-{{ track.slug }}" style="--accent: {{ track.color }};">
+                <div class="track-card-glow"></div>
+                <div class="track-card-content">
+                    <span class="track-icon">{{ track.icon }}</span>
+                    <h3 class="track-name">{{ track.name }}</h3>
+                    <p class="track-desc">{{ track.description }}</p>
+                    <div class="track-card-footer">
+                        <span class="track-badge">
+                            <i class="fas fa-play-circle"></i> Free Course
+                        </span>
+                        <span class="track-arrow">
+                            <i class="fas fa-arrow-right"></i>
+                        </span>
+                    </div>
+                </div>
+            </a>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+
+<!-- Features Section -->
+<section class="features-section">
+    <div class="section-container">
+        <div class="features-grid">
+            <div class="feature-card">
+                <div class="feature-icon"><i class="fas fa-video"></i></div>
+                <h3>YouTube Curated</h3>
+                <p>Hand-picked videos from the best educators on YouTube.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon"><i class="fas fa-road"></i></div>
+                <h3>Structured Roadmaps</h3>
+                <p>Phase-by-phase learning paths designed by industry standards.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon"><i class="fas fa-chart-bar"></i></div>
+                <h3>Track Progress</h3>
+                <p>Mark lectures complete and see your progress across all tracks.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon"><i class="fas fa-lock-open"></i></div>
+                <h3>100% Free & Open</h3>
+                <p>No paywalls, no ads. Just learning. Open source forever.</p>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

@@ -1,0 +1,35 @@
+{% extends "layout.html" %}
+
+{% block title %}Sign Up — AmpUp Skill{% endblock %}
+
+{% block body %}
+<section class="auth-page">
+    <div class="auth-card">
+        <div class="auth-header">
+            <span class="auth-icon"><i class="fas fa-user-plus"></i></span>
+            <h1>Create Account</h1>
+            <p>Start your learning journey today</p>
+        </div>
+        <form action="/register" method="post" class="auth-form" id="register-form">
+            <div class="form-group">
+                <label for="username"><i class="fas fa-user"></i> Username</label>
+                <input type="text" name="username" id="username" placeholder="Choose a username" required autofocus>
+            </div>
+            <div class="form-group">
+                <label for="password"><i class="fas fa-lock"></i> Password</label>
+                <input type="password" name="password" id="password" placeholder="At least 6 characters" required minlength="6">
+            </div>
+            <div class="form-group">
+                <label for="confirmation"><i class="fas fa-lock"></i> Confirm Password</label>
+                <input type="password" name="confirmation" id="confirmation" placeholder="Confirm your password" required>
+            </div>
+            <button type="submit" class="btn btn-primary btn-block">
+                <i class="fas fa-user-plus"></i> Sign Up
+            </button>
+        </form>
+        <p class="auth-footer">
+            Already have an account? <a href="/login">Log In</a>
+        </p>
+    </div>
+</section>
+{% endblock %}

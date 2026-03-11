@@ -1,0 +1,89 @@
+{% extends "layout.html" %}
+
+{% block title %}{{ lecture.title }} — {{ track.name }} — AmpUp Skill{% endblock %}
+
+{% block body %}
+<section class="lecture-page" style="--accent: {{ track.color }};">
+    <!-- Breadcrumb -->
+    <div class="lecture-breadcrumb">
+        <a href="/"><i class="fas fa-home"></i></a>
+        <i class="fas fa-chevron-right"></i>
+        <a href="/track/{{ track.slug }}">{{ track.name }}</a>
+        <i class="fas fa-chevron-right"></i>
+        <span>{{ phase.title }}</span>
+    </div>
+
+    <!-- Video Player -->
+    <div class="video-wrapper">
+        <div class="video-container">
+            <iframe src="https://www.youtube.com/embed/{{ lecture.youtube_id }}" title="{{ lecture.title }}"
+                frameborder="0"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                allowfullscreen>
+            </iframe>
+        </div>
+    </div>
+
+    <!-- Lecture Info -->
+    <div class="lecture-info">
+        <div class="lecture-info-header">
+            <div>
+                <span class="lecture-phase-badge"
+                    style="background: {{ track.color ~ '20' }}; color: {{ track.color }};">
+                    {{ phase.title }}
+                </span>
+                <h1 class="lecture-page-title">{{ lecture.title }}</h1>
+                {% if lecture.duration %}
+                <p class="lecture-meta"><i class="fas fa-clock"></i> {{ lecture.duration }}</p>
+                {% endif %}
+            </div>
+            {% if session.get("user_id") %}
+            <button class="btn {% if lecture.completed %}btn-completed{% else %}btn-accent{% endif %}" id="complete-btn"
+                onclick="toggleComplete({{ lecture.id }}, null, true)">
+                <i class="fas {% if lecture.completed %}fa-check-circle{% else %}fa-circle{% endif %}"></i>
+                {{ "Completed" if lecture.completed else "Mark Complete" }}
+            </button>
+            {% endif %}
+        </div>
+
+        <!-- Resource Links -->
+        {% if lecture.resource_links %}
+        <div class="resource-section">
+            <h3><i class="fas fa-link"></i> Additional Resources</h3>
+            <div class="resource-links">
+                {% for link in lecture.resource_links %}
+                <a href="{{ link }}" target="_blank" rel="noopener" class="resource-link">
+                    <i class="fas fa-external-link-alt"></i> {{ link }}
+                </a>
+                {% endfor %}
+            </div>
+        </div>
+        {% endif %}
+
+        <!-- Navigation -->
+        <div class="lecture-nav">
+            {% if prev_lec %}
+            <a href="/track/{{ track.slug }}/lecture/{{ prev_lec.id }}" class="lecture-nav-btn prev">
+                <i class="fas fa-arrow-left"></i>
+                <div>
+                    <span class="nav-label">Previous</span>
+                    <span class="nav-title">{{ prev_lec.title }}</span>
+                </div>
+            </a>
+            {% else %}
+            <div></div>
+            {% endif %}
+
+            {% if next_lec %}
+            <a href="/track/{{ track.slug }}/lecture/{{ next_lec.id }}" class="lecture-nav-btn next">
+                <div>
+                    <span class="nav-label">Next</span>
+                    <span class="nav-title">{{ next_lec.title }}</span>
+                </div>
+                <i class="fas fa-arrow-right"></i>
+            </a>
+            {% endif %}
+        </div>
+    </div>
+</section>
+{% endblock %}

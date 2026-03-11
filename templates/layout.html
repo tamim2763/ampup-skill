@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description"
+        content="AmpUp Skill — Free, open-source career tracks with curated YouTube courses in Blockchain, Backend Engineering, DevOps, and Machine Learning.">
+    <title>{% block title %}AmpUp Skill{% endblock %}</title>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
+
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+
+<body>
+    <!-- Navigation -->
+    <nav class="navbar" id="navbar">
+        <div class="nav-container">
+            <a href="/" class="nav-logo">
+                <span class="logo-icon">⚡</span>
+                <span class="logo-text">AmpUp<span class="logo-accent">Skill</span></span>
+            </a>
+
+            <button class="nav-toggle" id="nav-toggle" aria-label="Toggle navigation">
+                <i class="fas fa-bars"></i>
+            </button>
+
+            <ul class="nav-links" id="nav-links">
+                <li><a href="/" class="nav-link"><i class="fas fa-home"></i> Home</a></li>
+                {% if session.get("user_id") %}
+                <li><a href="/dashboard" class="nav-link"><i class="fas fa-chart-line"></i> Dashboard</a></li>
+                <li class="nav-user">
+                    <span class="nav-username"><i class="fas fa-user-circle"></i> {{ session.get("username") }}</span>
+                </li>
+                <li><a href="/logout" class="nav-link nav-btn nav-btn-outline">Logout</a></li>
+                {% else %}
+                <li><a href="/login" class="nav-link nav-btn nav-btn-outline">Login</a></li>
+                <li><a href="/register" class="nav-link nav-btn nav-btn-primary">Sign Up</a></li>
+                {% endif %}
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Flash Messages -->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+    <div class="flash-container">
+        {% for category, message in messages %}
+        <div class="flash flash-{{ category }}" id="flash-msg">
+            <span>{{ message }}</span>
+            <button class="flash-close" onclick="this.parentElement.remove()">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+    {% endwith %}
+
+    <!-- Main Content -->
+    <main class="main-content">
+        {% block body %}{% endblock %}
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-container">
+            <div class="footer-brand">
+                <span class="logo-icon">⚡</span>
+                <span class="logo-text">AmpUp<span class="logo-accent">Skill</span></span>
+                <p class="footer-tagline">Free, open-source career tracks with curated content.</p>
+            </div>
+            <div class="footer-links">
+                <a href="https://github.com/tamim2763" target="_blank"><i class="fab fa-github"></i> GitHub</a>
+                <a href="https://cs50.harvard.edu/x/" target="_blank"><i class="fas fa-graduation-cap"></i> CS50x</a>
+            </div>
+            <p class="footer-copy">&copy; 2026 AmpUp Skill &middot; Built for CS50x Final Project</p>
+        </div>
+    </footer>
+
+    <!-- JavaScript -->
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+</body>
+
+</html>

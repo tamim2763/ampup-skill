@@ -1,0 +1,78 @@
+{% extends "layout.html" %}
+
+{% block title %}{{ track.name }} — AmpUp Skill{% endblock %}
+
+{% block body %}
+<section class="track-page" style="--accent: {{ track.color }};">
+    <!-- Track Header -->
+    <div class="track-header">
+        <div class="track-header-content">
+            <a href="/" class="breadcrumb"><i class="fas fa-arrow-left"></i> All Tracks</a>
+            <div class="track-title-row">
+                <span class="track-page-icon">{{ track.icon }}</span>
+                <div>
+                    <h1 class="track-page-title">{{ track.name }}</h1>
+                    <p class="track-page-desc">{{ track.description }}</p>
+                </div>
+            </div>
+            <div class="track-actions">
+                <a href="/roadmap/{{ track.slug }}" class="btn btn-accent">
+                    <i class="fas fa-map-signs"></i> See Roadmap
+                </a>
+                {% if session.get("user_id") %}
+                <div class="progress-info">
+                    <div class="progress-bar-container">
+                        <div class="progress-bar-fill" style="width: {{ progress_pct }}%;"></div>
+                    </div>
+                    <span class="progress-text">{{ completed_lectures }}/{{ total_lectures }} completed ({{ progress_pct }}%)</span>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <!-- Phases & Lectures -->
+    <div class="phases-container">
+        {% for item in phases %}
+        <div class="phase-block" id="phase-{{ item.phase.phase_number }}">
+            <button class="phase-header" onclick="togglePhase(this)">
+                <div class="phase-title-row">
+                    <span class="phase-number">Phase {{ item.phase.phase_number }}</span>
+                    <h2 class="phase-title">{{ item.phase.title }}</h2>
+                </div>
+                <div class="phase-meta">
+                    <span class="phase-count">{{ item.lectures|length }} lectures</span>
+                    <i class="fas fa-chevron-down phase-chevron"></i>
+                </div>
+            </button>
+            <div class="phase-body phase-open">
+                {% for lec in item.lectures %}
+                <div class="lecture-item {% if lec.completed %}lecture-completed{% endif %}">
+                    <div class="lecture-main">
+                        {% if session.get("user_id") %}
+                        <button class="lecture-check {% if lec.completed %}checked{% endif %}"
+                                onclick="toggleComplete({{ lec.id }}, this)"
+                                aria-label="Mark as complete">
+                            <i class="fas {% if lec.completed %}fa-check-circle{% else %}fa-circle{% endif %}"></i>
+                        </button>
+                        {% else %}
+                        <span class="lecture-num">{{ lec.lecture_number }}</span>
+                        {% endif %}
+                        <a href="/track/{{ track.slug }}/lecture/{{ lec.id }}" class="lecture-link">
+                            <span class="lecture-title">{{ lec.title }}</span>
+                            {% if lec.duration %}
+                            <span class="lecture-duration"><i class="fas fa-clock"></i> {{ lec.duration }}</span>
+                            {% endif %}
+                        </a>
+                    </div>
+                    <a href="/track/{{ track.slug }}/lecture/{{ lec.id }}" class="lecture-play">
+                        <i class="fas fa-play"></i>
+                    </a>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</section>
+{% endblock %}

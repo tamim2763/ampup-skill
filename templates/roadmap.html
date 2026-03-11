@@ -1,0 +1,29 @@
+{% extends "layout.html" %}
+
+{% block title %}{{ track.name }} Roadmap — AmpUp Skill{% endblock %}
+
+{% block body %}
+<section class="roadmap-page" style="--accent: {{ track.color }};">
+    <div class="roadmap-header">
+        <a href="/track/{{ track.slug }}" class="breadcrumb">
+            <i class="fas fa-arrow-left"></i> Back to {{ track.name }}
+        </a>
+        <h1><span class="track-page-icon">{{ track.icon }}</span> {{ track.name }} Roadmap</h1>
+        <p>A structured learning roadmap powered by <a href="https://roadmap.sh" target="_blank" rel="noopener">roadmap.sh</a></p>
+    </div>
+
+    <div class="roadmap-card-container">
+        <div class="roadmap-link-card">
+            <div class="roadmap-link-icon">
+                <i class="fas fa-map-signs"></i>
+            </div>
+            <h2>View Interactive Roadmap</h2>
+            <p>Explore the full {{ track.name }} roadmap on roadmap.sh — an interactive, community-driven guide to the skills and technologies you need to master.</p>
+            <a href="{{ track.roadmap_url }}" target="_blank" rel="noopener" class="btn btn-accent btn-lg">
+                <i class="fas fa-external-link-alt"></i> Open Roadmap on roadmap.sh
+            </a>
+            <span class="roadmap-hint"><i class="fas fa-info-circle"></i> Opens in a new tab</span>
+        </div>
+    </div>
+</section>
+{% endblock %}
