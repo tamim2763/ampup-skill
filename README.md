@@ -1,6 +1,7 @@
 # AmpUp Skill
 #### Video Demo: [Click HERE](https://www.youtube.com/watch?v=lQCrZXJB3DU)
-#### Description:
+#### Visit Website: [Click HERE](https://tamim2763.pythonanywhere.com/)
+#### Description: 
 
 AmpUp Skill is an open-source course platform built with **Flask** and **SQLite** that curates free YouTube content into structured career tracks. Inspired by platforms like Udemy and Coursera, AmpUp Skill organizes high-quality, freely available video lectures from YouTube into phase-based curricula across four in-demand career paths: **Blockchain Development**, **Backend Engineering**, **DevOps Engineering**, and **Machine Learning**.
 
