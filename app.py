@@ -19,7 +19,7 @@ from helpers import login_required
 # ─── Configuration ────────────────────────────────────────────────────────────
 
 app = Flask(__name__)
-app.secret_key = "ampup-skill-cs50x-secret-key-change-in-production"
+app.secret_key = os.environ.get("SECRET_KEY", "ampup-skill-cs50x-secret-key-change-in-production")
 
 # Configure server-side session
 app.config["SESSION_PERMANENT"] = False
