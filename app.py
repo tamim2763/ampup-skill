@@ -1,6 +1,5 @@
 """
 AmpUp Skill — Open Source Course Platform
-CS50x Final Project
 
 A web app that curates free YouTube courses for career tracks
 in Blockchain, Backend Engineering, DevOps, and Machine Learning.
@@ -9,6 +8,7 @@ in Blockchain, Backend Engineering, DevOps, and Machine Learning.
 import json
 import sqlite3
 import os
+from datetime import date, datetime, timedelta
 
 from flask import Flask, flash, redirect, render_template, request, session, jsonify, g
 from flask_session import Session
@@ -27,6 +27,8 @@ app.config["SESSION_TYPE"] = "filesystem"
 Session(app)
 
 DB_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), "tracks.db")
+VISIT_COOLDOWN_MINUTES = 30
+VISIT_LOG_RETENTION_DAYS = 7
 
 
 # ─── Database Helper ──────────────────────────────────────────────────────────
@@ -49,6 +51,69 @@ def close_db(exception):
 
 # ─── Template Context ─────────────────────────────────────────────────────────
 
+def get_visit_stats():
+    """Return persisted visit counts for footer display."""
+    db = get_db()
+    visits_data = db.execute("SELECT total_visits, today_visits FROM visits WHERE id = 1").fetchone()
+
+    if not visits_data:
+        return {"total_visits": 0, "today_visits": 0}
+
+    return {
+        "total_visits": visits_data["total_visits"],
+        "today_visits": visits_data["today_visits"],
+    }
+
+
+def ensure_visit_tracking_tables():
+    """Create visit-tracking tables for existing deployments if they do not exist."""
+    db = get_db()
+    db.execute(
+        """
+        CREATE TABLE IF NOT EXISTS visits (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            total_visits INTEGER DEFAULT 0,
+            today_visits INTEGER DEFAULT 0,
+            last_visit_date DATE
+        )
+        """
+    )
+    db.execute(
+        """
+        CREATE TABLE IF NOT EXISTS visit_log (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            visitor_key TEXT NOT NULL UNIQUE,
+            last_counted_at TIMESTAMP NOT NULL
+        )
+        """
+    )
+    db.commit()
+
+
+def get_visitor_key():
+    """Build a simple visitor key using forwarded IP when available."""
+    forwarded_for = request.headers.get("X-Forwarded-For", "").split(",")[0].strip()
+    remote_addr = request.remote_addr or "unknown"
+    return forwarded_for or remote_addr
+
+
+def prune_old_visit_logs(db, now):
+    """Remove stale visit_log rows to keep the table small."""
+    cutoff = (now - timedelta(days=VISIT_LOG_RETENTION_DAYS)).isoformat()
+    db.execute("DELETE FROM visit_log WHERE last_counted_at < ?", (cutoff,))
+
+
+@app.context_processor
+def inject_visit_stats():
+    """Make visit counts available in the footer on every page."""
+    stats = get_visit_stats()
+    return {
+        **stats,
+        "formatted_total_visits": f"{stats['total_visits']:,}",
+        "formatted_today_visits": f"{stats['today_visits']:,}",
+    }
+
+
 @app.after_request
 def after_request(response):
     """Ensure responses aren't cached."""
@@ -62,8 +127,62 @@ def after_request(response):
 
 @app.route("/")
 def index():
-    """Homepage — show all career tracks."""
+    """Homepage — show all career tracks and manage visit counts."""
     db = get_db()
+    ensure_visit_tracking_tables()
+
+    today = date.today().isoformat()
+    now = datetime.utcnow()
+    visitor_key = get_visitor_key()
+
+    prune_old_visit_logs(db, now)
+
+    session_allowed = True
+    ip_allowed = True
+
+    last_session_counted_at = session.get("last_home_visit_counted_at")
+    if last_session_counted_at:
+        try:
+            session_allowed = now - datetime.fromisoformat(last_session_counted_at) >= timedelta(minutes=VISIT_COOLDOWN_MINUTES)
+        except ValueError:
+            session_allowed = True
+
+    ip_visit = db.execute(
+        "SELECT last_counted_at FROM visit_log WHERE visitor_key = ?",
+        (visitor_key,),
+    ).fetchone()
+    if ip_visit:
+        try:
+            ip_allowed = now - datetime.fromisoformat(ip_visit["last_counted_at"]) >= timedelta(minutes=VISIT_COOLDOWN_MINUTES)
+        except ValueError:
+            ip_allowed = True
+
+    if session_allowed and ip_allowed:
+        visits_data = db.execute("SELECT * FROM visits WHERE id = 1").fetchone()
+
+        if not visits_data:
+            db.execute(
+                "INSERT INTO visits (id, total_visits, today_visits, last_visit_date) VALUES (?, ?, ?, ?)",
+                (1, 1, 1, today),
+            )
+        else:
+            if visits_data["last_visit_date"] == today:
+                db.execute(
+                    "UPDATE visits SET total_visits = total_visits + 1, today_visits = today_visits + 1 WHERE id = 1"
+                )
+            else:
+                db.execute(
+                    "UPDATE visits SET total_visits = total_visits + 1, today_visits = 1, last_visit_date = ? WHERE id = 1",
+                    (today,),
+                )
+
+        db.execute(
+            "INSERT INTO visit_log (visitor_key, last_counted_at) VALUES (?, ?) ON CONFLICT(visitor_key) DO UPDATE SET last_counted_at = excluded.last_counted_at",
+            (visitor_key, now.isoformat()),
+        )
+        db.commit()
+        session["last_home_visit_counted_at"] = now.isoformat()
+
     tracks = db.execute("SELECT * FROM tracks ORDER BY id").fetchall()
     return render_template("index.html", tracks=tracks)
 

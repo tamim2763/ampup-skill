@@ -74,16 +74,37 @@
     <!-- Footer -->
     <footer class="footer">
         <div class="footer-container">
-            <div class="footer-brand">
-                <span class="logo-icon">⚡</span>
-                <span class="logo-text">AmpUp<span class="logo-accent">Skill</span></span>
-                <p class="footer-tagline">Free, open-source career tracks with curated content.</p>
+            <div class="footer-main">
+                <div class="footer-content">
+                    <div class="footer-brand">
+                        <span class="logo-icon">⚡</span>
+                        <span class="logo-text">AmpUp<span class="logo-accent">Skill</span></span>
+                        <p class="footer-tagline">Free, open-source career tracks with curated content.</p>
+                    </div>
+                    <div class="footer-links">
+                        <a href="https://github.com/tamim2763/ampup-skill" target="_blank"><i class="fab fa-github"></i> GitHub</a>
+                        <a href="https://cs50.harvard.edu/x/" target="_blank"><i class="fas fa-graduation-cap"></i> CS50x</a>
+                    </div>
+                    <p class="footer-copy">&copy; 2026 AmpUp Skill &middot; Built for CS50x Final Project</p>
+                </div>
+
+                <div class="footer-visit-stats" aria-label="Website visit statistics">
+                    <div class="footer-visit-card">
+                        <div class="visit-stat-icon"><i class="fas fa-calendar-day"></i></div>
+                        <div class="visit-stat-copy">
+                            <span class="visit-stat-label">Today's Visits</span>
+                            <span class="visit-stat-value">{{ formatted_today_visits|default('0') }}</span>
+                        </div>
+                    </div>
+                    <div class="footer-visit-card">
+                        <div class="visit-stat-icon"><i class="fas fa-chart-line"></i></div>
+                        <div class="visit-stat-copy">
+                            <span class="visit-stat-label">Total Visits</span>
+                            <span class="visit-stat-value">{{ formatted_total_visits|default('0') }}</span>
+                        </div>
+                    </div>
+                </div>
             </div>
-            <div class="footer-links">
-                <a href="https://github.com/tamim2763/ampup-skill" target="_blank"><i class="fab fa-github"></i> GitHub</a>
-                <a href="https://cs50.harvard.edu/x/" target="_blank"><i class="fas fa-graduation-cap"></i> CS50x</a>
-            </div>
-            <p class="footer-copy">&copy; 2026 AmpUp Skill &middot; Built for CS50x Final Project</p>
         </div>
     </footer>
 

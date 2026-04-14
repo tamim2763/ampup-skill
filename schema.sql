@@ -1,5 +1,4 @@
 -- AmpUp Skill Database Schema
--- CS50x Final Project
 
 -- Users table for authentication
 CREATE TABLE IF NOT EXISTS users (
@@ -51,4 +50,19 @@ CREATE TABLE IF NOT EXISTS progress (
     UNIQUE(user_id, lecture_id),
     FOREIGN KEY (user_id) REFERENCES users(id),
     FOREIGN KEY (lecture_id) REFERENCES lectures(id)
+);
+
+-- Website visit tracking
+CREATE TABLE IF NOT EXISTS visits (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    total_visits INTEGER DEFAULT 0,
+    today_visits INTEGER DEFAULT 0,
+    last_visit_date DATE
+);
+
+-- Visit cooldown tracking by IP
+CREATE TABLE IF NOT EXISTS visit_log (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    visitor_key TEXT NOT NULL UNIQUE,
+    last_counted_at TIMESTAMP NOT NULL
 );
